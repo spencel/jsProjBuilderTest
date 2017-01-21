@@ -1,0 +1,37 @@
+// MyClass Class
+
+// Static (aka Class) Properties
+MyClass.nextId = 0;
+
+MyClass.byId = {};
+
+MyClass.quantity = 0;
+// End Static Properties
+
+// Constructor
+function MyClass( parameterA, parameterB ) {
+
+	MyClass.byId[ MyClass.nextId ] = this;
+	MyClass.quantity++;
+
+	// Instance Properties
+	this.id = MyClass.nextId;
+	MyClass.nextId++;
+	// End Instance Properties
+
+	return this;
+
+}
+// End Constructor
+
+// Methods (organize methods by function and relationship)
+MyClass.staticMethodA = function() {
+
+}
+
+MyClass.prototype.instanceMethodA = function() {
+
+}
+// End Methods
+
+// End Class

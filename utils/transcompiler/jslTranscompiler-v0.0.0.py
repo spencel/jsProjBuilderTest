@@ -1,3 +1,26 @@
+'''
+This is a javascript to javascript transcompiler and file concatenator
+It utilizes directory and file names to determine dependency?, etc.
+E.g.:
+nameSpace.js
+nameSpace/
+	ClassA.js
+	ClassB.js
+	etc.
+	ModuleA.js
+	ModuleA/
+		ClassA.js
+		ClassB.js
+		etc.
+	ModuleB.js
+	ModuleB/
+		ClassA.js
+		ClassB.js
+		etc.
+	etc.
+The Class names above do not conflict because they are in isolated scopes, namespaces, and modules.
+Global variables and functions are coded inside the namespace and module js files.
+'''
 import io
 import os
 
@@ -7,6 +30,10 @@ sourceDirectory = "../../src/"
 buildDirectory = "../../build/"
 moduleName = "myNamespace"
 buildFileName = "myNamespace-v0.0.0.js"
+keywords = {
+	"public": "public",
+	"private": "private"
+}
 
 with io.open( buildDirectory + buildFileName, "w", encoding="utf-8" ) as buildFile:
 	with io.open( sourceDirectory + moduleName + ".js", "r", encoding="utf-8" ) as file:
@@ -19,45 +46,44 @@ with io.open( buildDirectory + buildFileName, "w", encoding="utf-8" ) as buildFi
 				print( line )
 
 			# If line is public member opener
-			if line.find( "/*public*/" ) > -1:
+			publicKeyword = keywords[ "public" ]
+			if line.find( publicKeyword ) > -1:
 
 				# If public function/method
 				if line.find( " = function(" ) > -1:
-					memberNameStartIndex = 12 + len( moduleName ) 
+					memberNameStartIndex = len( publicKeyword ) + 1 # space sensitive must be 1 space between keyword and identifier
 					memberNameEndIndex  = line.find( " = function(" )
 					memberName = line[ memberNameStartIndex : memberNameEndIndex ]
 					print( memberName )
 					publicMembers.append( memberName )
 					line = line.replace( " = function(", "(", 1 )
-					line = line.replace( "/*public*/ " + moduleName + ".", "/*public*/ function ", 1 )
+					line = line.replace( publicKeyword, "/*" + publicKeyword + "*/", 1 )
 					print( line )
 
 				# Else public variable/property
 				else:
-					memberNameStartIndex = 12 + len( moduleName ) 
+					memberNameStartIndex = len( publicKeyword ) + 1 # space sensitive must be 1 space between keyword and identifier
 					memberNameEndIndex  = line.find( " = " )
 					memberName = line[ memberNameStartIndex : memberNameEndIndex ]
 					print( memberName )
 					publicMembers.append( memberName )
-					line = line.replace( "/*public*/ " + moduleName + ".", "/*public*/ var ", 1 )
+					line = line.replace( publicKeyword, "/*" + publicKeyword + "*/", 1 )
 					print( line )
 
 			# If line is private member opener
-			if line.find( "/*private*/" ) > -1:
+			privateKeyword = keywords[ "private" ]
+			if line.find( privateKeyword ) > -1:
 
 				# If private function/method
 				if line.find( " = function(" ) > -1:
 					line = line.replace( " = function(", "(", 1 )
-					line = line.replace( "/*private*/ " + moduleName + ".", "/*private*/ function ", 1 )
+					line = line.replace( privateKeyword, "/*" + privateKeyword + "*/", 1 )
 					print( line )
 
 				# Else private variable/property
 				else:
-					line = line.replace( "/*private*/ " + moduleName + ".", "/*private*/ var ", 1 )
+					line = line.replace( privateKeyword, "/*" + privateKeyword + "*/", 1 )
 					print( line )
-
-			# If line has [moduleName]., then remove that part of the line
-			line = line.replace( moduleName + ".", "" )
 
 			buildFile.write( line )
 				

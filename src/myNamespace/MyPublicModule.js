@@ -1,14 +1,28 @@
 // MyPublicModule Module (Abstract Class simulated as a Module)
-var /*public*/ MyPublicModule = {};
+public module MyPublicModule{}
 
-// Variables (Static (aka Class) Properties)
+// Global Variables (Static (aka Class) Properties)
+public var myPublicVariable = "myNamespace.MyPublicModule.myPublicVariable";
 
-// End Variables 
+private var myPrivateVariable = "myNamespace.MyPublicModule.myPrivateVariable";
+// End Global Variables 
 
-// Functions (Static (aka Class) Methods) (organize methods by function and relationship)
-MyPublicModule.staticMethodA = function() {
+// Global Functions (Static (aka Class) Methods) (organize methods by function and relationship)
+public function myPublicFunction() {
+
+	console.log( "myNamespace.MyPublicModule.myPublicFunction" );
+
+	console.log( myPrivateVariable ); 
+
+	myPrivateFunction();
 
 }
-// End Function
+
+private function myPrivateFunction() {
+
+	console.log( "myNamespace.MyPublicModule.myPrivateFunction" );
+
+}
+// End Global Functions
 
 // End Module
